@@ -1,0 +1,22 @@
+services:
+  mcp_server:
+    image: mcp_prueba
+    command: ["uv", "run", "server.py", "--server_type=sse"]
+    networks:
+      - mcp_network
+    ports:
+      - "21000:21000"
+
+  mcp_client:
+    image: mcp_prueba
+    command: ["uv", "run", "ollama_client.py"]
+    networks:
+      - mcp_network
+    depends_on:
+      - mcp_server
+      
+# Crea la red.
+networks:
+  mcp_network:
+    name: mcp_network
+    driver: bridge
