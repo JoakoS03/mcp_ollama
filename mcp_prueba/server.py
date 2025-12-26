@@ -78,11 +78,11 @@ def consultar_a_un_sitio(
     """
     Consulta un sitio web (HTML) y devuelve el contenido textual relevante.
 
-    Parámetros:
+    Parametros:
     - url: URL del sitio
     - metodo: GET o POST
     - headers: headers HTTP opcionales
-    - params: parámetros de query
+    - params: parametros de query
     - data: body de la request
 
     Ejemplo:
@@ -110,7 +110,7 @@ def consultar_a_un_sitio(
 
         content_type = response.headers.get("Content-Type", "")
 
-        # Si es HTML → limpiar y extraer texto
+        # Si es HTML se limpia y extrae el texto
         if "text/html" in content_type:
             soup = BeautifulSoup(response.text, "html.parser")
 
@@ -189,4 +189,5 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+
     server.run(args.server_type)
