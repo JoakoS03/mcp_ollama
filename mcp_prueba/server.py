@@ -110,7 +110,7 @@ def consultar_a_un_sitio(
 
         content_type = response.headers.get("Content-Type", "")
 
-        # Si es HTML → limpiar y extraer texto
+        # Si es HTML limpiar y extraer texto
         if "text/html" in content_type:
             soup = BeautifulSoup(response.text, "html.parser")
 
@@ -203,3 +203,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     server.run(args.server_type)
+
