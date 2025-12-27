@@ -128,7 +128,8 @@ def consultar_a_un_sitio(
 
     except requests.exceptions.RequestException as e:
         return f"Error al consultar el sitio: {str(e)}"
-
+        
+#Podria hacer una tool por cada instruccion sql pero queria probar inicialmente si de esta forma funciona bien.
 @server.tool()
 def execute_query(query: str) -> str:
     """
@@ -200,4 +201,5 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+
     server.run(args.server_type)
