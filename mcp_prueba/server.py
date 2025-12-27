@@ -138,6 +138,12 @@ def execute_query(query: str) -> str:
         >>> execute_query("INSERT INTO users (username, password_hash) VALUES ('Juan', 'clave1234');")
         
     """
+
+    query_upper = query.strip().upper()
+
+    if not query_upper.startswith(("INSERT", "UPDATE", "DELETE")):
+        return "Solo se permiten queries de escritura"
+
     try :
         conn = get_connection() #Funcion que crea la conexion a la base de datos
         cursor = conn.cursor() #Crea el cursor
@@ -157,11 +163,16 @@ def execute_query(query: str) -> str:
 def get_users(query : str = "SELECT * FROM users;") -> str:
     """
     Realiza una consulta SQL de tipo (SELECT) a la base de datos.
-
+    
     Ejemplo:
         >>> get_users("SELECT * FROM users WHERE age > 30;")
         
     """
+    query_upper = query.strip().upper()
+
+    if not query_upper.startswith("SELECT"):
+        eturn "Solo se permiten SELECT"
+
     try :
         conn = get_connection() #Funcion que crea la conexion a la base de datos
         cursor = conn.cursor() #Crea el cursor
