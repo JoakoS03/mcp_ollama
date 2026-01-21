@@ -75,6 +75,9 @@ docs/_build/
 .pybuilder/
 target/
 
+./mcp_prueba/res/
+./mcp_prueba/.env
+./mcp_prueba/uploads/
 # Jupyter Notebook
 .ipynb_checkpoints
 

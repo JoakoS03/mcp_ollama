@@ -16,4 +16,13 @@ dependencies = [
     "python-dotenv",
     "wikipedia",
     "bs4",
+    "pytesseract",
+    "PyMuPDF",
+    "pathlib",
+    "apscheduler",
+    "numpy==2.3.3",
+    "pdf2image",
+    "pillow",
+    "requests",
+    "ollama"
 ]

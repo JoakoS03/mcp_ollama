@@ -1,26 +1,18 @@
 FROM python:3.13
 
-RUN pip install --no-cache-dir uv uvicorn fastapi
+ENV UV_VENV_DISABLED=1
 
 WORKDIR /app
 
 COPY pyproject.toml uv.lock ./
 
-RUN uv sync --frozen || true
+RUN pip install --no-cache-dir uv \
+    && uv pip install --system .
 
-RUN pip install --no-cache-dir \
-    "fastapi-mcp>=0.2.0" \
-    "ipykernel>=6.29.5" \
-    "linkup-sdk>=0.2.4" \
-    "llama-index>=0.12.30" \
-    "llama-index-llms-ollama>=0.5.4" \
-    "llama-index-tools-mcp>=0.1.1" \
-    "mcp[cli]>=1.6.0" \
-    psycopg \
-    python-dotenv \
-    wikipedia \
-    bs4 \
-    uvicorn>=0.30.0
+RUN apt-get update && \
+    apt-get install -y tesseract-ocr tesseract-ocr-spa && \
+    apt-get install -y --no-install-recommends poppler-utils &&\
+    rm -rf /var/lib/apt/lists/*
 
 COPY . .
 
