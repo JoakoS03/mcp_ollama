@@ -27,6 +27,7 @@ OLLAMA_URL = os.environ.get("OLLAMA_URL")
 MODEL = os.environ.get("OLLAMA_MODEL")
 PDF_DIR = os.environ.get("PDF_DIR", "./res")
 RES_DIR = os.environ.get("RES_DIR", "./res")
+MAX_AGE_SECONDS = 10 * 60
 
 SYSTEM_PROMPT = """
 Usa herramientas siempre.
@@ -103,20 +104,30 @@ async def gather_tools_from_urls(urls, retry_seconds=2, max_retries=30):
                 await asyncio.sleep(retry_seconds)
     return mcp_tools
 
-"""
-Borra archivos PDF viejos en el directorio de uploads cada un dia.
-"""
-def delete_old_files():
-    deleted_pdfs = 0
-    deleted_dirs = 0
 
+'''
+Borra archivos PDF viejos en el directorio de uploads cada 10 minutos.
+'''
+def delete_old_files():
+    deleted = 0
+    deleted_dirs = 0
+    now = time.time()
     try:
         for name in os.listdir(RES_DIR):
             path = os.path.join(RES_DIR, name)
             try:
-                if os.path.isfile(path) and name.lower().endswith(".pdf") or name.lower().endswith(".png") or name.lower().endswith(".txt"):
+                # Tiempo desde la utima modificación
+                age = now - os.path.getmtime(path)
+
+                if age < MAX_AGE_SECONDS:
+                    continue  # todava no tiene 10 min
+
+                if (
+                    os.path.isfile(path)
+                    and name.lower().endswith((".pdf", ".png", ".txt"))
+                ):
                     os.remove(path)
-                    deleted_pdfs += 1
+                    deleted += 1
                 elif os.path.isdir(path):
                     shutil.rmtree(path)
                     deleted_dirs += 1
@@ -124,14 +135,14 @@ def delete_old_files():
                 print(f"Error eliminando {path}: {e}")
     except Exception as e:
         print(f"Error listando RES_DIR ({RES_DIR}): {e}")
-    print(f"PDFs eliminados: {deleted_pdfs}")
+    print(f"Archivos eliminados: {deleted}")
     print(f"Directorios eliminados: {deleted_dirs}")
 
 @app.on_event("startup")
 def iniciar_scheduler():
     global scheduler
     scheduler = BackgroundScheduler(daemon=True)
-    scheduler.add_job(delete_old_files, 'interval', days=1)
+    scheduler.add_job(delete_old_files, 'interval', minutes=10)
     scheduler.start()
     print("[info] Scheduler iniciado")
 
@@ -140,6 +151,7 @@ def detener_scheduler():
     if scheduler:
         scheduler.shutdown()
         print("[info] Scheduler detenido")
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -220,8 +232,8 @@ async def api_agent_upload(message: str = Form(...), file: UploadFile = File(...
         input_with_context = f"El siguiente es el texto extraído del PDF:\n\n{text}\n\nCon base en este texto, responde a la siguiente pregunta:\n{user_input}"
 
         response = await handle_user_message(input_with_context, _agent, _agent_ctx ,verbose=True)
+        print("[info] Respuesta generada correctamente."+"\n")
         return {"response": response}
-
     except Exception as e:
         print("[error] Al procesar la petición:", e)
         raise HTTPException(status_code=500, detail=str(e))

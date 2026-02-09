@@ -15,14 +15,6 @@ services:
     ports:
       - "21005:21000"
 
-  mcp_poema:
-    image: mcp_prueba
-    command: ["uv", "run", "mcp_servers/mcp_server_poema.py", "--server_type=sse"]
-    networks:
-      - mcp_network
-    ports:
-      - "21006:21000"
-
   #filesystem-mcp:
   #  image: node:20
   #  working_dir: /app
@@ -53,14 +45,14 @@ services:
     command: ["python", "-m", "uvicorn", "ollama_client:app", "--host", "0.0.0.0", "--port", "8000"]
     networks:
       - mcp_network
+      - app-network
     depends_on:
       - mcp_busquedas_web
       - mcp_db
-      - mcp_poema
       #- filesystem-mcp
     environment:
-      MCP_SERVERS: http://mcp_busquedas_web:21000/sse,http://mcp_db:21000/sse,http://mcp_poema:21000/sse
-      OLLAMA_URL: OLLAMA_URL_ENV
+      MCP_SERVERS: http://mcp_busquedas_web:21000/sse,http://mcp_db:21000/sse
+      OLLAMA_URL: ${OLLAMA_URL_ENV}
       OLLAMA_MODEL: qwen3-vl:30b
     ports:
       - "21003:8000"
@@ -70,3 +62,5 @@ networks:
   mcp_network:
     name: mcp_network
     driver: bridge
+  app-network:
+    external: true
