@@ -12,15 +12,15 @@ El siguiente diagrama detalla cómo interactúan los componentes dentro de la re
 
 ```mermaid
 graph TD
-    User([🗣️ Usuario]) -->|Interactúa en CLI| Client[🧠 LlamaIndex Agent <br><i>ollama_client.py</i>]
-    Client -->|1. Consulta LLM| Ollama[🦙 Ollama API <br><i>Host / External</i>]
-    Client -->|2. Invoca Herramientas (SSE)| MCPServer[⚡ FastMCP Server <br><i>server.py</i>]
+    User(["🗣️ Usuario"]) -->|Interactúa en CLI| Client["🧠 LlamaIndex Agent (ollama_client.py)"]
+    Client -->|1. Consulta LLM| Ollama["🦙 Ollama API (Host / External)"]
+    Client -->|2. Invoca Herramientas (SSE)| MCPServer["⚡ FastMCP Server (server.py)"]
     
-    subgraph Servidor MCP (Herramientas)
-        MCPServer -->|SQL SELECT / Write| DB[(🐘 PostgreSQL <br><i>postgres_db</i>)]
-        MCPServer -->|API Query| Wikipedia[🌐 Wikipedia API]
-        MCPServer -->|Scrape HTML| Web[🕸️ Scraping Web <br><i>requests + bs4</i>]
-        MCPServer -->|Respuestas Locales| Local[📝 Funciones Core]
+    subgraph "Servidor MCP (Herramientas)"
+        MCPServer -->|SQL SELECT / Write| DB[("🐘 PostgreSQL (postgres_db)")]
+        MCPServer -->|API Query| Wikipedia["🌐 Wikipedia API"]
+        MCPServer -->|Scrape HTML| Web["🕸️ Scraping Web (requests + bs4)"]
+        MCPServer -->|Respuestas Locales| Local["📝 Funciones Core"]
     end
 ```
 
